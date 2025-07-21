@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./Books.css"; // Import the CSS file
 
 const API_URL = "https://cclab3-466610.de.r.appspot.com/books";
 
@@ -46,10 +47,10 @@ export default function Books() {
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "auto", padding: "20px" }}>
-      <h2>📚 Library Manager</h2>
+    <div className="books-container">
+      <h2 className="books-header">📚 Library Manager</h2>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+      <form onSubmit={handleSubmit} className="books-form">
         <input
           type="text"
           name="title"
@@ -57,7 +58,6 @@ export default function Books() {
           value={formData.title}
           onChange={handleChange}
           required
-          style={{ marginRight: "10px" }}
         />
         <input
           type="text"
@@ -66,7 +66,6 @@ export default function Books() {
           value={formData.author}
           onChange={handleChange}
           required
-          style={{ marginRight: "10px" }}
         />
         <input
           type="number"
@@ -74,40 +73,98 @@ export default function Books() {
           placeholder="Year"
           value={formData.year}
           onChange={handleChange}
-          style={{ marginRight: "10px", width: "100px" }}
         />
         <button type="submit">{editId ? "Update" : "Add"}</button>
       </form>
 
-      <table border="1" width="100%" cellPadding="10">
-        <thead>
-          <tr style={{ backgroundColor: "#f0f0f0" }}>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Year</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.length === 0 ? (
-            <tr><td colSpan="5">No books found.</td></tr>
-          ) : (
-            books.map((book) => (
-              <tr key={book.id}>
-                <td>{book.id}</td>
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>{book.year}</td>
-                <td>
-                  <button onClick={() => handleEdit(book)}>✏️</button>
-                  <button onClick={() => handleDelete(book.id)}>🗑️</button>
+      {/* Table view for larger screens */}
+      <div className="books-table-wrapper">
+        <table className="books-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Year</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {books.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="empty-state">
+                  No books found. Add your first book above!
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              books.map((book) => (
+                <tr key={book.id}>
+                  <td>{book.id}</td>
+                  <td>{book.title}</td>
+                  <td>{book.author}</td>
+                  <td>{book.year}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button 
+                        onClick={() => handleEdit(book)} 
+                        className="action-btn edit-btn"
+                        title="Edit book"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(book.id)} 
+                        className="action-btn delete-btn"
+                        title="Delete book"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Card view for mobile screens */}
+      <div className="books-cards">
+        {books.length === 0 ? (
+          <div className="empty-state">
+            No books found. Add your first book above!
+          </div>
+        ) : (
+          books.map((book) => (
+            <div key={book.id} className="book-card">
+              <div className="book-card-header">
+                <div className="book-card-title">{book.title}</div>
+                <div className="book-card-id">#{book.id}</div>
+              </div>
+              <div className="book-card-info">
+                <p><strong>Author:</strong> {book.author}</p>
+                <p><strong>Year:</strong> {book.year}</p>
+              </div>
+              <div className="book-card-actions">
+                <button 
+                  onClick={() => handleEdit(book)} 
+                  className="action-btn edit-btn"
+                  title="Edit book"
+                >
+                  ✏️
+                </button>
+                <button 
+                  onClick={() => handleDelete(book.id)} 
+                  className="action-btn delete-btn"
+                  title="Delete book"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
